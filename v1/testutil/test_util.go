@@ -129,3 +129,74 @@ func ExpectedGetCandlesticsModel() *models.Candlesticks {
 	}
 	return &models.Candlesticks{Success: 1, Data: data}
 }
+
+func GetAssetsJsonResponse() string {
+	return `
+{
+  "success": 1,
+  "data": {
+    "assets": [
+      {
+        "asset": "jpy",
+        "amount_precision": 4,
+        "onhand_amount": "0.8451",
+        "locked_amount": "0.0000",
+        "free_amount": "0.8451",
+        "stop_deposit": false,
+        "stop_withdrawal": false,
+        "withdrawal_fee": {
+          "threshold": "30000.0000",
+          "under": "540.0000",
+          "over": "756.0000"
+        }
+      },
+      {
+        "asset": "btc",
+        "amount_precision": 8,
+        "onhand_amount": "0.00000000",
+        "locked_amount": "0.00000000",
+        "free_amount": "0.00000000",
+        "stop_deposit": false,
+        "stop_withdrawal": false,
+        "withdrawal_fee": "0.00100000"
+      }
+		]
+  }
+}
+`
+}
+
+func ExpectedGetAssetsModel() *models.Assets {
+	w1 := &models.WithdrawalFee{
+		Threshold: "30000.0000",
+		Under:     "540.0000",
+		Over:      "756.0000",
+	}
+	w2 := &models.WithdrawalFee{
+		Fee: "0.00100000",
+	}
+
+	a1 := &models.Asset{
+		Asset:           "jpy",
+		AmountPrecision: 4,
+		OnhandAmount:    "0.8451",
+		LockedAmount:    "0.0000",
+		FreeAmount:      "0.8451",
+		StopDeposit:     false,
+		StopWithdrawal:  false,
+		WithdrawalFee:   w1,
+	}
+	a2 := &models.Asset{
+		Asset:           "btc",
+		AmountPrecision: 8,
+		OnhandAmount:    "0.00000000",
+		LockedAmount:    "0.00000000",
+		FreeAmount:      "0.00000000",
+		StopDeposit:     false,
+		StopWithdrawal:  false,
+		WithdrawalFee:   w2,
+	}
+	ad := &models.AssetsData{Assets: []*models.Asset{a1, a2}}
+	return &models.Assets{Success: 1, Data: ad}
+
+}

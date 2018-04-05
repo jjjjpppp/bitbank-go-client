@@ -2,9 +2,11 @@ package bitbank
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 	"io"
 	"io/ioutil"
@@ -15,16 +17,21 @@ import (
 	"net/url"
 	"path"
 	"runtime"
+	"strings"
 	"time"
 )
 
 const (
-	baseUrl string = "https://public.bitbank.cc"
-	version string = "0.0.1"
+	baseUrl        string = "https://public.bitbank.cc"
+	privateBaseUrl string = "https://api.bitbank.cc/v1"
+	version        string = "0.0.1"
 )
 
+// API document https://docs.bitbank.cc/
+// Error codes https://docs.bitbank.cc/error_code/
 type Client struct {
 	URL        *url.URL
+	PrivateURL *url.URL
 	ApiTokenID string
 	ApiSecret  string
 	HTTPClient *http.Client
@@ -41,7 +48,11 @@ func NewClient(apiTokenID string, apiSecret string, logger *log.Logger) (*Client
 		return nil, fmt.Errorf("apiSecret is not set")
 	}
 
-	url, err := url.ParseRequestURI(baseUrl)
+	publicUrl, err := url.ParseRequestURI(baseUrl)
+	if err != nil {
+		return nil, err
+	}
+	privateUrl, err := url.ParseRequestURI(privateBaseUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +63,7 @@ func NewClient(apiTokenID string, apiSecret string, logger *log.Logger) (*Client
 	}
 
 	client := &http.Client{Timeout: time.Duration(10) * time.Second}
-	return &Client{URL: url, ApiTokenID: apiTokenID, ApiSecret: apiSecret, HTTPClient: client, Logger: logger}, nil
+	return &Client{URL: publicUrl, PrivateURL: privateUrl, ApiTokenID: apiTokenID, ApiSecret: apiSecret, HTTPClient: client, Logger: logger}, nil
 
 }
 
@@ -133,14 +144,18 @@ func (c *Client) GetCandlesticks(ctx context.Context, pair, candleType, ymdStrin
 
 func (c *Client) newRequest(ctx context.Context, method, spath string, body io.Reader, queryParam *map[string]string) (*http.Request, error) {
 
+	var u url.URL
 	// swith client url for unit test
 	if c.testServer != nil {
-		url, _ := url.ParseRequestURI(c.testServer.URL)
-		*c.URL = *url
+		testUrl, _ := url.ParseRequestURI(c.testServer.URL)
+		u = *testUrl
+	} else if isRequestPublic(spath) {
+		u = *c.URL
+	} else {
+		u = *c.PrivateURL
 	}
 
-	u := *c.URL
-	u.Path = path.Join(c.URL.Path, spath)
+	u.Path = path.Join(u.Path, spath)
 
 	// build QueryParameter
 	if queryParam != nil {
@@ -153,15 +168,7 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 
 	userAgent := fmt.Sprintf("GoClient/%s (%s)", version, runtime.Version())
 	accessNonce := fmt.Sprintf("%d", time.Now().Unix())
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"path":  spath + u.RawQuery,
-		"nonce": accessNonce,
-	})
-
-	tokenString, err := token.SignedString([]byte(c.ApiSecret))
-	if err != nil {
-		return nil, err
-	}
+	tokenString := MakeHMAC(accessNonce+"/v1"+spath+u.RawQuery, c.ApiSecret)
 
 	req, err := http.NewRequest(method, u.String(), body)
 	if err != nil {
@@ -213,4 +220,17 @@ func httpResponseLog(resp *http.Response) string {
 func httpRequestLog(req *http.Request) string {
 	b, _ := httputil.DumpRequest(req, true)
 	return string(b)
+}
+
+func isRequestPublic(path string) bool {
+	if strings.Contains(path, "/ticker") || strings.Contains(path, "/depth") || strings.Contains(path, "/transactions") || strings.Contains(path, "/candlestick") {
+		return true
+	}
+	return false
+}
+
+func MakeHMAC(msg, key string) string {
+	mac := hmac.New(sha256.New, []byte(key))
+	mac.Write([]byte(msg))
+	return hex.EncodeToString(mac.Sum(nil))
 }
