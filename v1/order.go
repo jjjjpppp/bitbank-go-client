@@ -48,3 +48,24 @@ func (c *Client) CreateOrder(ctx context.Context, pair, amount string, price int
 
 	return &order, nil
 }
+
+func (c *Client) CancelOrder(ctx context.Context, pair string, orderID int) (*models.Order, error) {
+	spath := fmt.Sprintf("/user/spot/cancel_order")
+	bodyTemplate :=
+		`{
+  "pair":"%s",
+  "order_id":%d
+}`
+	body := fmt.Sprintf(bodyTemplate, pair, orderID)
+	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var order models.Order
+	if err := decodeBody(res, &order); err != nil {
+		return nil, err
+	}
+
+	return &order, nil
+}
