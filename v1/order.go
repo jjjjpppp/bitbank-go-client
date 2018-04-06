@@ -6,9 +6,12 @@ import (
 	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 )
 
-func (c *Client) GetOrder(ctx context.Context) (*models.Order, error) {
+func (c *Client) GetOrder(ctx context.Context, pair, orderID string) (*models.Order, error) {
 	spath := fmt.Sprintf("/user/spot/order")
-	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
+	queryParam := &map[string]string{
+		"pair":     pair,
+		"order_id": orderID}
+	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
 	if err != nil {
 		return nil, err
 	}

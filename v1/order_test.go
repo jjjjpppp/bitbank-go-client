@@ -11,6 +11,8 @@ import (
 
 func TestGetOrder(t *testing.T) {
 	type Param struct {
+		pair         string
+		orderID      string
 		jsonResponse string
 	}
 	type Expect struct {
@@ -25,8 +27,8 @@ func TestGetOrder(t *testing.T) {
 	}{
 		// test case 1
 		{
-			param:  Param{jsonResponse: testutil.GetOrderJsonResponse()},
-			expect: Expect{path: "/user/spot/order", method: "GET", body: "", e: testutil.ExpectedGetOrderModel()},
+			param:  Param{pair: "btc_jpy", orderID: "12345", jsonResponse: testutil.GetOrderJsonResponse()},
+			expect: Expect{path: "/user/spot/order?order_id=12345&pair=btc_jpy", method: "GET", body: "", e: testutil.ExpectedGetOrderModel()},
 		},
 		// test case 2
 	}
@@ -38,7 +40,7 @@ func TestGetOrder(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetOrder(ctx)
+		r, err := client.GetOrder(ctx, c.param.pair, c.param.orderID)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
