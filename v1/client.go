@@ -1,6 +1,7 @@
 package bitbank
 
 import (
+	"bytes"
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"
@@ -168,9 +169,16 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 
 	userAgent := fmt.Sprintf("GoClient/%s (%s)", version, runtime.Version())
 	accessNonce := fmt.Sprintf("%d", time.Now().Unix())
-	tokenString := MakeHMAC(accessNonce+"/v1"+spath+u.RawQuery, c.ApiSecret)
+	var tokenString string
+	var b bytes.Buffer
+	if method == "GET" {
+		tokenString = MakeHMAC(accessNonce+"/v1"+spath+u.RawQuery, c.ApiSecret)
+	} else {
+		io.Copy(&b, body)
+		tokenString = MakeHMAC(accessNonce+b.String(), c.ApiSecret)
+	}
 
-	req, err := http.NewRequest(method, u.String(), body)
+	req, err := http.NewRequest(method, u.String(), &b)
 	if err != nil {
 		return nil, err
 	}

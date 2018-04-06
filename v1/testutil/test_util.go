@@ -238,3 +238,49 @@ func ExpectedGetOrderModel() *models.Order {
 	}
 	return &models.Order{Success: 1, Data: data}
 }
+
+func CreateOrderJsonResponse() string {
+	return `{
+  "success": 1,
+  "data": {
+    "order_id": 0,
+    "pair": "string",
+    "side": "string",
+    "type": "string",
+    "start_amount": "string",
+    "remaining_amount": "string",
+    "executed_amount": "string",
+    "price": "string",
+    "average_price": "string",
+    "ordered_at": 0,
+    "status": "string"
+  }
+}`
+}
+
+func ExpectedCreateOrderBody() string {
+	return `{
+  "pair":"btc_jpy",
+  "amount":"0.1",
+  "price":100000,
+  "side":"buy",
+  "type":"limit"
+}`
+}
+
+func ExpectedCreateOrderModel() *models.Order {
+	data := &models.OrderData{
+		OrderID:         0,
+		Pair:            "string",
+		Side:            "string",
+		Type:            "string",
+		StartAmount:     "string",
+		RemainingAmount: "string",
+		ExecutedAmount:  "string",
+		Price:           "string",
+		AveragePrice:    "string",
+		OrderedAt:       0,
+		Status:          "string",
+	}
+	return &models.Order{Success: 1, Data: data}
+}
