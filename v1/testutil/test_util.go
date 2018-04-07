@@ -470,3 +470,49 @@ func ExpectedGetOrdersInfoModel() *models.Orders {
 	}
 	return &models.Orders{Success: 1, Data: ods}
 }
+
+func GetTradesJsonResponse() string {
+	return `{
+  "success": 1,
+  "data": {
+    "trades": [
+      {
+        "trade_id": 0,
+        "pair": "string",
+        "order_id": 0,
+        "side": "string",
+        "type": "string",
+        "amount": "string",
+        "price": "string",
+        "maker_taker": "string",
+        "fee_amount_base": "string",
+        "fee_amount_quote": "string",
+        "executed_at": 0
+      }
+    ]
+  }
+}
+`
+}
+
+func ExpectedGetTradesModel() *models.Trades {
+	m1 := &models.Trade{
+		TradeID:        0,
+		Pair:           "string",
+		OrderID:        0,
+		Side:           "string",
+		Type:           "string",
+		Amount:         "string",
+		Price:          "string",
+		MakerTaker:     "string",
+		FeeAmountBase:  "string",
+		FeeAmountQuote: "string",
+		ExecutedAt:     0,
+	}
+
+	d := &models.TradesData{
+		Trades: []*models.Trade{m1},
+	}
+
+	return &models.Trades{Success: 1, Data: d}
+}
