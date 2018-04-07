@@ -49,6 +49,28 @@ func (c *Client) CreateOrder(ctx context.Context, pair, amount string, price int
 	return &order, nil
 }
 
+func (c *Client) GetOrders(ctx context.Context, pair string, count, fromID, endID, since, end float64) (*models.Orders, error) {
+	spath := fmt.Sprintf("/user/spot/active_orders")
+	queryParam := &map[string]string{
+		"pair":    pair,
+		"count":   fmt.Sprint(count),
+		"from_id": fmt.Sprint(fromID),
+		"end_id":  fmt.Sprint(endID),
+		"since":   fmt.Sprint(since),
+		"end":     fmt.Sprint(end)}
+	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
+	if err != nil {
+		return nil, err
+	}
+
+	var orders models.Orders
+	if err := decodeBody(res, &orders); err != nil {
+		return nil, err
+	}
+
+	return &orders, nil
+}
+
 func (c *Client) CancelOrder(ctx context.Context, pair string, orderID int) (*models.Order, error) {
 	spath := fmt.Sprintf("/user/spot/cancel_order")
 	bodyTemplate :=

@@ -50,6 +50,51 @@ func TestGetOrder(t *testing.T) {
 	}
 }
 
+func TestGetOrders(t *testing.T) {
+	type Param struct {
+		pair         string
+		count        float64
+		fromID       float64
+		endID        float64
+		since        float64
+		end          float64
+		jsonResponse string
+	}
+	type Expect struct {
+		path   string
+		method string
+		body   string
+		e      *models.Orders
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{pair: "btc_jpy", count: 1, fromID: 1, endID: 10, since: 12345, end: 12355, jsonResponse: testutil.GetOrdersJsonResponse()},
+			expect: Expect{path: "/user/spot/active_orders?count=1&end=12355&end_id=10&from_id=1&pair=btc_jpy&since=12345", method: "GET", body: "", e: testutil.ExpectedGetOrdersModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		r, err := client.GetOrders(ctx, c.param.pair, c.param.count, c.param.fromID, c.param.endID, c.param.since, c.param.end)
+		if err != nil {
+			t.Errorf("Error. %+v", err)
+		}
+		if !cmp.Equal(r, c.expect.e) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(r, c.expect.e))
+		}
+	}
+}
+
 func TestCreateOrder(t *testing.T) {
 	type Param struct {
 		pair         string

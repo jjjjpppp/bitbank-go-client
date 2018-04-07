@@ -239,6 +239,49 @@ func ExpectedGetOrderModel() *models.Order {
 	return &models.Order{Success: 1, Data: data}
 }
 
+func GetOrdersJsonResponse() string {
+	return `{
+  "success": 1,
+  "data": {
+    "orders": [
+      {
+        "order_id": 0,
+        "pair": "string",
+        "side": "string",
+        "type": "string",
+        "start_amount": "string",
+        "remaining_amount": "string",
+        "executed_amount": "string",
+        "price": "string",
+        "average_price": "string",
+        "ordered_at": 0,
+        "status": "string"
+      }
+    ]
+  }
+}`
+}
+
+func ExpectedGetOrdersModel() *models.Orders {
+	od := &models.OrderData{
+		OrderID:         0,
+		Pair:            "string",
+		Side:            "string",
+		Type:            "string",
+		StartAmount:     "string",
+		RemainingAmount: "string",
+		ExecutedAmount:  "string",
+		Price:           "string",
+		AveragePrice:    "string",
+		OrderedAt:       0,
+		Status:          "string",
+	}
+	ods := &models.OrdersData{
+		Orders: []*models.OrderData{od},
+	}
+	return &models.Orders{Success: 1, Data: ods}
+}
+
 func CreateOrderJsonResponse() string {
 	return `{
   "success": 1,
