@@ -172,10 +172,10 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	var tokenString string
 	var b bytes.Buffer
 	if method == "GET" {
-		tokenString = MakeHMAC(accessNonce+"/v1"+spath+u.RawQuery, c.ApiSecret)
+		tokenString = makeHMAC(accessNonce+"/v1"+spath+u.RawQuery, c.ApiSecret)
 	} else {
 		io.Copy(&b, body)
-		tokenString = MakeHMAC(accessNonce+b.String(), c.ApiSecret)
+		tokenString = makeHMAC(accessNonce+b.String(), c.ApiSecret)
 	}
 
 	req, err := http.NewRequest(method, u.String(), &b)
@@ -237,8 +237,14 @@ func isRequestPublic(path string) bool {
 	return false
 }
 
-func MakeHMAC(msg, key string) string {
+func makeHMAC(msg, key string) string {
 	mac := hmac.New(sha256.New, []byte(key))
 	mac.Write([]byte(msg))
 	return hex.EncodeToString(mac.Sum(nil))
+}
+
+func arrayToString(a []int, delim string) string {
+	return strings.Trim(strings.Replace(fmt.Sprint(a), " ", delim, -1), "[]")
+	//return strings.Trim(strings.Join(strings.Split(fmt.Sprint(a), " "), delim), "[]")
+	//return strings.Trim(strings.Join(strings.Fields(fmt.Sprint(a)), delim), "[]")
 }

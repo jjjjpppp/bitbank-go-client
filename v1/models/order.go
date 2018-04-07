@@ -18,3 +18,12 @@ type OrderData struct {
 	OrderedAt       int    `json:"ordered_at"`
 	Status          string `json:"status"`
 }
+
+type Orders struct {
+	Success int         `json:"success"`
+	Data    *OrdersData `json:"data"`
+}
+
+type OrdersData struct {
+	Orders []*OrderData `json:"orders"`
+}

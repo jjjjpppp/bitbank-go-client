@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  name = "github.com/dgrijalva/jwt-go"
-  packages = ["."]
-  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
-  version = "v3.2.0"
-
-[[projects]]
   name = "github.com/google/go-cmp"
   packages = [
     "cmp",
@@ -18,18 +12,9 @@
   revision = "3af367b6b30c263d47e8895973edcca9a49cf029"
   version = "v0.2.0"
 
-[[projects]]
-  branch = "master"
-  name = "github.com/jjjjpppp/quoinex-go-client"
-  packages = [
-    "v2/models",
-    "v2/testutil"
-  ]
-  revision = "55b0405a251ed176dd7b469e2720f0727aac6706"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1803ae3d90abf99836670de93eccdd8523c6c0c06b2fda7a7ae83bc0150b614a"
+  inputs-digest = "a9fc52e870e8eef02b0e34e49602a3b8541e2b41b913d304f9dc50c20cc8a21d"
   solver-name = "gps-cdcl"
   solver-version = 1
