@@ -516,3 +516,74 @@ func ExpectedGetTradesModel() *models.Trades {
 
 	return &models.Trades{Success: 1, Data: d}
 }
+
+func GetWithdrawalAccountsJsonResponse() string {
+	return `{
+  "success": 1,
+  "data": {
+    "accounts": [
+      {
+        "uuid": "string",
+        "label": "string",
+        "address": "string"
+      }
+    ]
+  }
+}
+`
+}
+
+func ExpectedGetWithdrawalAccountsModel() *models.WithdrawalAccounts {
+	a := &models.Account{
+		UUID:    "string",
+		Label:   "string",
+		Address: "string",
+	}
+	w := &models.WithdrawalAccountsData{
+		Accounts: []*models.Account{a},
+	}
+	return &models.WithdrawalAccounts{Success: 1, Data: w}
+}
+
+func RequestWithdrawalJsonResponse() string {
+	return `{
+  "success": 0,
+  "data": {
+    "uuid": "string",
+    "asset": "string",
+    "amount": 0,
+    "account_uuid": "string",
+    "fee": "string",
+    "status": "string",
+    "label": "string",
+    "txid": "string",
+    "address": "string"
+  }
+}`
+}
+
+func ExpectedRequestWithdrawalBody() string {
+	return `{
+  "asset":"btc",
+  "uuid":"12345",
+  "amount":"100",
+  "otp_token":"aaaa",
+  "sms_token":"bbbb"
+}`
+}
+
+func ExpectedRequestWithdrawalModel() *models.RequestWithdrawal {
+
+	m := &models.RequestWithdrawalData{
+		UUID:        "string",
+		Asset:       "string",
+		Amount:      0,
+		AccountUUID: "string",
+		Fee:         "string",
+		Status:      "string",
+		Label:       "string",
+		Txid:        "string",
+		Address:     "string",
+	}
+	return &models.RequestWithdrawal{Success: 0, Data: m}
+}
