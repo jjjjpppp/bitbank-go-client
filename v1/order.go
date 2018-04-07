@@ -90,3 +90,24 @@ func (c *Client) CancelOrders(ctx context.Context, pair string, orderIDs []int) 
 
 	return &orders, nil
 }
+
+func (c *Client) GetOrdersInfo(ctx context.Context, pair string, orderIDs []int) (*models.Orders, error) {
+	spath := fmt.Sprintf("/user/spot/orders_info")
+	bodyTemplate :=
+		`{
+  "pair":"%s",
+  "order_ids":[%s]
+}`
+	body := fmt.Sprintf(bodyTemplate, pair, arrayToString(orderIDs, ","))
+	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var orders models.Orders
+	if err := decodeBody(res, &orders); err != nil {
+		return nil, err
+	}
+
+	return &orders, nil
+}
