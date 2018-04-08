@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/jjjjpppp/bitbank-go-client/tree/master.svg?style=svg)](https://circleci.com/gh/jjjjpppp/bitbank-go-client/tree/master)
+
 # bitbank-go-client
 
 bitbank-go-client is a [go](https://golang.org/) client library for [Bitbank.cc API](https://docs.bitbank.cc/).
