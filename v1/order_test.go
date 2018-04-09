@@ -50,7 +50,7 @@ func TestGetOrder(t *testing.T) {
 	}
 }
 
-func TestGetOrders(t *testing.T) {
+func TestGetActiveOrders(t *testing.T) {
 	type Param struct {
 		pair         string
 		count        float64
@@ -85,7 +85,7 @@ func TestGetOrders(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetOrders(ctx, c.param.pair, c.param.count, c.param.fromID, c.param.endID, c.param.since, c.param.end)
+		r, err := client.GetActiveOrders(ctx, c.param.pair, c.param.count, c.param.fromID, c.param.endID, c.param.since, c.param.end)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}

@@ -49,7 +49,7 @@ func (c *Client) CreateOrder(ctx context.Context, pair, amount string, price int
 	return &order, nil
 }
 
-func (c *Client) GetOrders(ctx context.Context, pair string, count, fromID, endID, since, end float64) (*models.Orders, error) {
+func (c *Client) GetActiveOrders(ctx context.Context, pair string, count, fromID, endID, since, end float64) (*models.Orders, error) {
 	spath := fmt.Sprintf("/user/spot/active_orders")
 	queryParam := &map[string]string{
 		"pair":    pair,
