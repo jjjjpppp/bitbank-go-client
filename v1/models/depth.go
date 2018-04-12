@@ -48,3 +48,31 @@ func (p *Depth) SortBidsByQuontity() [][]float64 {
 	})
 	return sortBids
 }
+
+func (p *Depth) SortAsksByPrice(order string) [][]float64 {
+	sortAsks := p.GetAsksFloat64()
+	if order == "asc" {
+		sort.Slice(sortAsks, func(i, j int) bool {
+			return sortAsks[i][0] < sortAsks[j][0]
+		})
+	} else {
+		sort.Slice(sortAsks, func(i, j int) bool {
+			return sortAsks[i][0] > sortAsks[j][0]
+		})
+	}
+	return sortAsks
+}
+
+func (p *Depth) SortBidsByPrice(order string) [][]float64 {
+	sortBids := p.GetBidsFloat64()
+	if order == "asc" {
+		sort.Slice(sortBids, func(i, j int) bool {
+			return sortBids[i][0] < sortBids[j][0]
+		})
+	} else {
+		sort.Slice(sortBids, func(i, j int) bool {
+			return sortBids[i][0] > sortBids[j][0]
+		})
+	}
+	return sortBids
+}
