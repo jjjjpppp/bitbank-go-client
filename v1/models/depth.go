@@ -6,11 +6,13 @@ import (
 )
 
 type Depth struct {
-	Success int `json:"success"`
-	Data    struct {
-		Asks [][]json.Number `json:"asks"`
-		Bids [][]json.Number `json:"bids"`
-	} `json:"data"`
+	Success int       `json:"success"`
+	Data    DepthData `json:"data"`
+}
+
+type DepthData struct {
+	Asks [][]json.Number `json:"asks"`
+	Bids [][]json.Number `json:"bids"`
 }
 
 func (p *Depth) GetAsksFloat64() [][]float64 {
