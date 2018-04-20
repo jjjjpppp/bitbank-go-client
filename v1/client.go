@@ -1,3 +1,10 @@
+/*
+  Package bitbank is a API Client of Bitbank.cc
+
+  API document https://docs.bitbank.cc/
+
+  Error codes https://docs.bitbank.cc/error_code/
+*/
 package bitbank
 
 import (
@@ -23,13 +30,15 @@ import (
 )
 
 const (
-	baseUrl        string = "https://public.bitbank.cc"
+	// baseUrl is a public API URL
+	baseUrl string = "https://public.bitbank.cc"
+	// privateBaseUrl is a private API URL
 	privateBaseUrl string = "https://api.bitbank.cc/v1"
-	version        string = "0.0.1"
+	// version of this software
+	version string = "0.0.1"
 )
 
-// API document https://docs.bitbank.cc/
-// Error codes https://docs.bitbank.cc/error_code/
+// Main client struct of this package
 type Client struct {
 	URL        *url.URL
 	PrivateURL *url.URL
@@ -40,6 +49,7 @@ type Client struct {
 	testServer *httptest.Server
 }
 
+// Generate Client with token ID and secret. you can find these infomation in bitbank site.
 func NewClient(apiTokenID string, apiSecret string, logger *log.Logger) (*Client, error) {
 	if len(apiTokenID) == 0 {
 		return nil, fmt.Errorf("apiTokenID is not set")
@@ -68,6 +78,7 @@ func NewClient(apiTokenID string, apiSecret string, logger *log.Logger) (*Client
 
 }
 
+// Get Ticker https://docs.bitbank.cc/#!/Ticker/ticker
 func (c *Client) GetTicker(ctx context.Context, pair string) (*models.Ticker, error) {
 	spath := fmt.Sprintf("/%s/ticker", pair)
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
@@ -83,6 +94,7 @@ func (c *Client) GetTicker(ctx context.Context, pair string) (*models.Ticker, er
 	return &ticker, nil
 }
 
+// Get Depth https://docs.bitbank.cc/#!/Depth/depth
 func (c *Client) GetDepth(ctx context.Context, pair string) (*models.Depth, error) {
 	spath := fmt.Sprintf("/%s/depth", pair)
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
@@ -98,6 +110,7 @@ func (c *Client) GetDepth(ctx context.Context, pair string) (*models.Depth, erro
 	return &depth, nil
 }
 
+// Get Transactions https://docs.bitbank.cc/#!/Transactions/transactions
 func (c *Client) GetTransactions(ctx context.Context, pair string) (*models.Transactions, error) {
 	spath := fmt.Sprintf("/%s/transactions", pair)
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
@@ -113,6 +126,7 @@ func (c *Client) GetTransactions(ctx context.Context, pair string) (*models.Tran
 	return &transaction, nil
 }
 
+// Get Transactions by YYYYMMDD https://docs.bitbank.cc/#!/Transactions/transactions_YYYYMMDD
 func (c *Client) GetTransactionsByYMD(ctx context.Context, pair, ymdString string) (*models.Transactions, error) {
 	spath := fmt.Sprintf("/%s/transactions/%s", pair, ymdString)
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
@@ -128,6 +142,7 @@ func (c *Client) GetTransactionsByYMD(ctx context.Context, pair, ymdString strin
 	return &transaction, nil
 }
 
+// Get Candlesticks https://docs.bitbank.cc/#!/Candlestick/candlestick
 func (c *Client) GetCandlesticks(ctx context.Context, pair, candleType, ymdString string) (*models.Candlesticks, error) {
 	spath := fmt.Sprintf("/%s/candlestick/%s/%s", pair, candleType, ymdString)
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)

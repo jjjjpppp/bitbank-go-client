@@ -1,3 +1,4 @@
+// All return values from Bitbank.cc is set in this package models.
 package models
 
 import (
@@ -5,16 +6,22 @@ import (
 	"sort"
 )
 
+// Main struct of getDepth.
+//  Success
+//    0:fail
+//    1:success
 type Depth struct {
 	Success int       `json:"success"`
 	Data    DepthData `json:"data"`
 }
 
+// Array of [price] [quontity]
 type DepthData struct {
 	Asks [][]json.Number `json:"asks"`
 	Bids [][]json.Number `json:"bids"`
 }
 
+// Return Asks in type of float64
 func (p *Depth) GetAsksFloat64() [][]float64 {
 	var asksFloat64 [][]float64
 	for _, ask := range p.Data.Asks {
@@ -25,6 +32,7 @@ func (p *Depth) GetAsksFloat64() [][]float64 {
 	return asksFloat64
 }
 
+// Return Bids in type of float64
 func (p *Depth) GetBidsFloat64() [][]float64 {
 	var bidsFloat64 [][]float64
 	for _, bid := range p.Data.Bids {
@@ -35,6 +43,7 @@ func (p *Depth) GetBidsFloat64() [][]float64 {
 	return bidsFloat64
 }
 
+// Return Sorted(Quontity asc) Asks in type of float64
 func (p *Depth) SortAsksByQuontity() [][]float64 {
 	sortAsks := p.GetAsksFloat64()
 	sort.Slice(sortAsks, func(i, j int) bool {
@@ -43,6 +52,7 @@ func (p *Depth) SortAsksByQuontity() [][]float64 {
 	return sortAsks
 }
 
+// Return Sorted(Quontity asc) Bid in type of float64
 func (p *Depth) SortBidsByQuontity() [][]float64 {
 	sortBids := p.GetBidsFloat64()
 	sort.Slice(sortBids, func(i, j int) bool {
@@ -51,6 +61,7 @@ func (p *Depth) SortBidsByQuontity() [][]float64 {
 	return sortBids
 }
 
+// Return Asks in type of float64, Sorted by Price.  you can set order with "asc" or "desc".
 func (p *Depth) SortAsksByPrice(order string) [][]float64 {
 	sortAsks := p.GetAsksFloat64()
 	if order == "asc" {
@@ -65,6 +76,7 @@ func (p *Depth) SortAsksByPrice(order string) [][]float64 {
 	return sortAsks
 }
 
+// Return Bids in type of float64, Sorted by Price.  you can set order with "asc" or "desc".
 func (p *Depth) SortBidsByPrice(order string) [][]float64 {
 	sortBids := p.GetBidsFloat64()
 	if order == "asc" {
