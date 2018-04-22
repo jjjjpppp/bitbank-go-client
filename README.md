@@ -18,7 +18,7 @@ package main
 
 import (
  "fmt"
- "github.com/jjjjpppp/bitbank-go-client"
+ "github.com/jjjjpppp/bitbank-go-client/v1"
 )
 
 
