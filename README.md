@@ -3,7 +3,7 @@
 # bitbank-go-client
 
 bitbank-go-client is a [go](https://golang.org/) client library for [Bitbank.cc API](https://docs.bitbank.cc/).
-[godoc]()
+[godoc](https://godoc.org/github.com/jjjjpppp/bitbank-go-client/v1)
 
 ## Installation
 
