@@ -1,5 +1,10 @@
 package request
 
+type GetOrderParams struct {
+	Pair *string
+	OrderID *string
+}
+
 type GetActiveOrdersParams struct {
 	Pair   *string
 	Count  *float64

@@ -42,7 +42,8 @@ func TestGetOrder(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetOrder(ctx, c.param.pair, c.param.orderID)
+		params := request.GetOrderParams{&c.param.pair, &c.param.orderID}
+		r, err := client.GetOrder(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
