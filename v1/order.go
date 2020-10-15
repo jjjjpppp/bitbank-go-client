@@ -1,10 +1,12 @@
 package bitbank
 
 import (
+	"bitbank-go-client/v1/request"
 	"context"
 	"fmt"
-	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 	"strings"
+
+	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 )
 
 func (c *Client) GetOrder(ctx context.Context, pair, orderID string) (*models.Order, error) {
@@ -49,16 +51,31 @@ func (c *Client) CreateOrder(ctx context.Context, pair, amount string, price int
 	return &order, nil
 }
 
-func (c *Client) GetActiveOrders(ctx context.Context, pair string, count, fromID, endID, since, end float64) (*models.Orders, error) {
+func (c *Client) GetActiveOrders(ctx context.Context, params request.GetActiveOrdersParams) (*models.Orders, error) {
 	spath := fmt.Sprintf("/user/spot/active_orders")
-	queryParam := &map[string]string{
-		"pair":    pair,
-		"count":   fmt.Sprint(count),
-		"from_id": fmt.Sprint(fromID),
-		"end_id":  fmt.Sprint(endID),
-		"since":   fmt.Sprint(since),
-		"end":     fmt.Sprint(end)}
-	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
+	queryParam := make(map[string]string)
+
+	// set required param
+	queryParam["pair"] = *params.Pair
+
+	// set optional param
+	if params.Count != nil {
+		queryParam["count"] = fmt.Sprint(*params.Count)
+	}
+	if params.FromID != nil {
+		queryParam["from_id"] = fmt.Sprint(*params.FromID)
+	}
+	if params.EndID != nil {
+		queryParam["end_id"] = fmt.Sprint(*params.EndID)
+	}
+	if params.Since != nil {
+		queryParam["since"] = fmt.Sprint(*params.Since)
+	}
+	if params.End != nil {
+		queryParam["end"] = fmt.Sprint(*params.End)
+	}
+
+	res, err := c.sendRequest(ctx, "GET", spath, nil, &queryParam)
 	if err != nil {
 		return nil, err
 	}

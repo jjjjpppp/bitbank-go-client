@@ -1,12 +1,14 @@
 package bitbank
 
 import (
+	"bitbank-go-client/v1/request"
 	"context"
+	"testing"
+	"time"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 	"github.com/jjjjpppp/bitbank-go-client/v1/testutil"
-	"testing"
-	"time"
 )
 
 func TestGetOrder(t *testing.T) {
@@ -85,7 +87,8 @@ func TestGetActiveOrders(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetActiveOrders(ctx, c.param.pair, c.param.count, c.param.fromID, c.param.endID, c.param.since, c.param.end)
+		params := request.GetActiveOrdersParams{&c.param.pair, &c.param.count, &c.param.fromID, &c.param.endID, &c.param.since, &c.param.end}
+		r, err := client.GetActiveOrders(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
