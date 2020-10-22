@@ -2,7 +2,9 @@ package bitbank
 
 import (
 	"bitbank-go-client/v1/request"
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -12,10 +14,10 @@ import (
 func (c *Client) GetOrder(ctx context.Context, params request.GetOrderParams) (*models.Order, error) {
 	spath := fmt.Sprintf("/user/spot/order")
 	queryParam := make(map[string]string)
-	
+
 	// set required param
-	queryParam["pair"] = *params.Pair
-	queryParam["order_id"] = *params.OrderID
+	queryParam["pair"] = params.Pair
+	queryParam["order_id"] = params.OrderID
 
 	res, err := c.sendRequest(ctx, "GET", spath, nil, &queryParam)
 	if err != nil {
@@ -30,17 +32,18 @@ func (c *Client) GetOrder(ctx context.Context, params request.GetOrderParams) (*
 	return &order, nil
 }
 
-func (c *Client) CreateOrder(ctx context.Context, pair, amount string, price int, side, _type string) (*models.Order, error) {
+func (c *Client) CreateOrder(ctx context.Context, params request.CreateOrderParams) (*models.Order, error) {
 	spath := fmt.Sprintf("/user/spot/order")
-	bodyTemplate :=
-		`{
-  "pair":"%s",
-  "amount":"%s",
-  "price":%d,
-  "side":"%s",
-  "type":"%s"
-}`
-	body := fmt.Sprintf(bodyTemplate, pair, amount, price, side, _type)
+	bodyTemplate, err := json.Marshal(params)
+	var buf bytes.Buffer
+	err = json.Indent(&buf, []byte(bodyTemplate), "", "  ")
+	if err != nil {
+	panic(err)
+	}
+	if err != nil {
+		return nil, err
+	}
+	body := buf.String()
 	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
@@ -59,23 +62,23 @@ func (c *Client) GetActiveOrders(ctx context.Context, params request.GetActiveOr
 	queryParam := make(map[string]string)
 
 	// set required param
-	queryParam["pair"] = *params.Pair
+	queryParam["pair"] = params.Pair
 
 	// set optional param
-	if params.Count != nil {
-		queryParam["count"] = fmt.Sprint(*params.Count)
+	if params.Count != 0.0 {
+		queryParam["count"] = fmt.Sprint(params.Count)
 	}
-	if params.FromID != nil {
-		queryParam["from_id"] = fmt.Sprint(*params.FromID)
+	if params.FromID != 0.0 {
+		queryParam["from_id"] = fmt.Sprint(params.FromID)
 	}
-	if params.EndID != nil {
-		queryParam["end_id"] = fmt.Sprint(*params.EndID)
+	if params.EndID != 0.0 {
+		queryParam["end_id"] = fmt.Sprint(params.EndID)
 	}
-	if params.Since != nil {
-		queryParam["since"] = fmt.Sprint(*params.Since)
+	if params.Since != 0.0 {
+		queryParam["since"] = fmt.Sprint(params.Since)
 	}
-	if params.End != nil {
-		queryParam["end"] = fmt.Sprint(*params.End)
+	if params.End != 0.0 {
+		queryParam["end"] = fmt.Sprint(params.End)
 	}
 
 	res, err := c.sendRequest(ctx, "GET", spath, nil, &queryParam)

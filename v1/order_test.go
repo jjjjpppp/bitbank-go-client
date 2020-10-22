@@ -42,7 +42,7 @@ func TestGetOrder(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		params := request.GetOrderParams{&c.param.pair, &c.param.orderID}
+		params := request.GetOrderParams{c.param.pair, c.param.orderID}
 		r, err := client.GetOrder(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
@@ -88,7 +88,7 @@ func TestGetActiveOrders(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		params := request.GetActiveOrdersParams{&c.param.pair, &c.param.count, &c.param.fromID, &c.param.endID, &c.param.since, &c.param.end}
+		params := request.GetActiveOrdersParams{c.param.pair, c.param.count, c.param.fromID, c.param.endID, c.param.since, c.param.end}
 		r, err := client.GetActiveOrders(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
@@ -133,7 +133,8 @@ func TestCreateOrder(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.CreateOrder(ctx, c.param.pair, c.param.amount, c.param.price, c.param.side, c.param._type)
+		params := request.CreateOrderParams{c.param.pair, c.param.amount, c.param.price, c.param.side, c.param._type}
+		r, err := client.CreateOrder(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}

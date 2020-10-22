@@ -3,11 +3,12 @@ package testutil
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 )
 
 func GenerateTestServer(t *testing.T, expectPath string, expectMethod string, expectBody string, jsonResponse string) *httptest.Server {
@@ -303,11 +304,11 @@ func CreateOrderJsonResponse() string {
 
 func ExpectedCreateOrderBody() string {
 	return `{
-  "pair":"btc_jpy",
-  "amount":"0.1",
-  "price":100000,
-  "side":"buy",
-  "type":"limit"
+  "pair": "btc_jpy",
+  "amount": "0.1",
+  "price": 100000,
+  "side": "buy",
+  "type": "limit"
 }`
 }
 
