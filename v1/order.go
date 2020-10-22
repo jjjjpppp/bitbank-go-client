@@ -1,7 +1,6 @@
 package bitbank
 
 import (
-	"bitbank-go-client/v1/request"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -9,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/jjjjpppp/bitbank-go-client/v1/models"
+	"github.com/jjjjpppp/bitbank-go-client/v1/request"
 )
 
 func (c *Client) GetOrder(ctx context.Context, params request.GetOrderParams) (*models.Order, error) {
@@ -35,11 +35,11 @@ func (c *Client) GetOrder(ctx context.Context, params request.GetOrderParams) (*
 func (c *Client) CreateOrder(ctx context.Context, params request.CreateOrderParams) (*models.Order, error) {
 	spath := fmt.Sprintf("/user/spot/order")
 	bodyTemplate, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
 	var buf bytes.Buffer
 	err = json.Indent(&buf, []byte(bodyTemplate), "", "  ")
-	if err != nil {
-	panic(err)
-	}
 	if err != nil {
 		return nil, err
 	}
@@ -94,14 +94,18 @@ func (c *Client) GetActiveOrders(ctx context.Context, params request.GetActiveOr
 	return &orders, nil
 }
 
-func (c *Client) CancelOrder(ctx context.Context, pair string, orderID int) (*models.Order, error) {
+func (c *Client) CancelOrder(ctx context.Context, params request.CancelOrderParams) (*models.Order, error) {
 	spath := fmt.Sprintf("/user/spot/cancel_order")
-	bodyTemplate :=
-		`{
-  "pair":"%s",
-  "order_id":%d
-}`
-	body := fmt.Sprintf(bodyTemplate, pair, orderID)
+	bodyTemplate, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = json.Indent(&buf, []byte(bodyTemplate), "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	body := buf.String()
 	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err

@@ -1,13 +1,13 @@
 package bitbank
 
 import (
-	"bitbank-go-client/v1/request"
 	"context"
 	"testing"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/jjjjpppp/bitbank-go-client/v1/models"
+	"github.com/jjjjpppp/bitbank-go-client/v1/request"
 	"github.com/jjjjpppp/bitbank-go-client/v1/testutil"
 )
 
@@ -175,7 +175,8 @@ func TestCancelOrder(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.CancelOrder(ctx, c.param.pair, c.param.orderID)
+		params := request.CancelOrderParams{c.param.pair, c.param.orderID}
+		r, err := client.CancelOrder(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}

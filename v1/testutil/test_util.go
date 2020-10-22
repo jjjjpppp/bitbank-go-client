@@ -350,8 +350,8 @@ func CancelOrderJsonResponse() string {
 
 func ExpectedCancelOrderBody() string {
 	return `{
-  "pair":"btc_jpy",
-  "order_id":12345
+  "pair": "btc_jpy",
+  "order_id": 12345
 }`
 }
 

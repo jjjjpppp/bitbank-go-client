@@ -21,3 +21,8 @@ type GetActiveOrdersParams struct {
 	Since  float64	`json:"since,omitempty"`
 	End    float64	`json:"end,omitempty"`
 }
+
+type CancelOrderParams struct {
+	Pair string		`json:"pair,omitempty"`
+	OrderID int		`json:"order_id,omitempty"`
+}
