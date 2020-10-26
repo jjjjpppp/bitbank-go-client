@@ -119,14 +119,18 @@ func (c *Client) CancelOrder(ctx context.Context, params request.CancelOrderPara
 	return &order, nil
 }
 
-func (c *Client) CancelOrders(ctx context.Context, pair string, orderIDs []int) (*models.Orders, error) {
+func (c *Client) CancelOrders(ctx context.Context, params request.CancelOrdersParams) (*models.Orders, error) {
 	spath := fmt.Sprintf("/user/spot/cancel_orders")
-	bodyTemplate :=
-		`{
-  "pair":"%s",
-  "order_ids":[%s]
-}`
-	body := fmt.Sprintf(bodyTemplate, pair, arrayToString(orderIDs, ","))
+	bodyTemplate, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = json.Indent(&buf, []byte(bodyTemplate), "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	body := buf.String()
 	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err

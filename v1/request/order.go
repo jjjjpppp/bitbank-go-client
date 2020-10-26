@@ -26,3 +26,8 @@ type CancelOrderParams struct {
 	Pair string		`json:"pair,omitempty"`
 	OrderID int		`json:"order_id,omitempty"`
 }
+
+type CancelOrdersParams struct {
+	Pair string		`json:"pair,omitempty"`
+	OrderIDs []int	`json:"order_ids,omitempty"`
+}

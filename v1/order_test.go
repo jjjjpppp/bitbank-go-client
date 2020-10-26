@@ -217,7 +217,8 @@ func TestCancelOrders(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.CancelOrders(ctx, c.param.pair, c.param.orderIDs)
+		params := request.CancelOrdersParams{c.param.pair, c.param.orderIDs}
+		r, err := client.CancelOrders(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
