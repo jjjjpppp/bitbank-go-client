@@ -259,7 +259,8 @@ func TestGetOrdersInfo(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetOrdersInfo(ctx, c.param.pair, c.param.orderIDs)
+		params := request.GetOrdersInfoParams{c.param.pair, c.param.orderIDs}
+		r, err := client.GetOrdersInfo(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}

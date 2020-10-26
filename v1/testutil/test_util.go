@@ -453,8 +453,14 @@ func GetOrdersInfoJsonResponse() string {
 
 func ExpectedGetOrdersInfoBody() string {
 	return `{
-  "pair":"btc_jpy",
-  "order_ids":[1,2,3,4,5]
+  "pair": "btc_jpy",
+  "order_ids": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ]
 }`
 }
 
