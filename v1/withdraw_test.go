@@ -2,11 +2,13 @@ package bitbank
 
 import (
 	"context"
-	"github.com/google/go-cmp/cmp"
-	"github.com/jjjjpppp/bitbank-go-client/v1/models"
-	"github.com/jjjjpppp/bitbank-go-client/v1/testutil"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/jjjjpppp/bitbank-go-client/v1/models"
+	"github.com/jjjjpppp/bitbank-go-client/v1/request"
+	"github.com/jjjjpppp/bitbank-go-client/v1/testutil"
 )
 
 func TestGetWithdrawalAccounts(t *testing.T) {
@@ -83,7 +85,8 @@ func TestRequestWithdrawal(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.RequestWithdrawal(ctx, c.param.asset, c.param.uuid, c.param.amount, c.param.otpToken, c.param.smsToken)
+		params := request.RequestWithdrawalParams{c.param.asset, c.param.uuid, c.param.amount, c.param.otpToken, c.param.smsToken}
+		r, err := client.RequestWithdrawal(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}

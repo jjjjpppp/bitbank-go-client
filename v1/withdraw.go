@@ -1,10 +1,14 @@
 package bitbank
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 	"strings"
+
+	"github.com/jjjjpppp/bitbank-go-client/v1/models"
+	"github.com/jjjjpppp/bitbank-go-client/v1/request"
 )
 
 func (c *Client) GetWithdrawalAccounts(ctx context.Context, asset string) (*models.WithdrawalAccounts, error) {
@@ -25,17 +29,18 @@ func (c *Client) GetWithdrawalAccounts(ctx context.Context, asset string) (*mode
 	return &withdrawalAcdounts, nil
 }
 
-func (c *Client) RequestWithdrawal(ctx context.Context, asset, uuid, amount, otpToken, smsToken string) (*models.RequestWithdrawal, error) {
+func (c *Client) RequestWithdrawal(ctx context.Context, params request.RequestWithdrawalParams) (*models.RequestWithdrawal, error) {
 	spath := fmt.Sprintf("/user/request_withdrawal")
-	bodyTemplate :=
-		`{
-  "asset":"%s",
-  "uuid":"%s",
-  "amount":"%s",
-  "otp_token":"%s",
-  "sms_token":"%s"
-}`
-	body := fmt.Sprintf(bodyTemplate, asset, uuid, amount, otpToken, smsToken)
+	bodyTemplate, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = json.Indent(&buf, []byte(bodyTemplate), "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	body := buf.String()
 	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err

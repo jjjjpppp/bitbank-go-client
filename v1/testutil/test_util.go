@@ -577,11 +577,11 @@ func RequestWithdrawalJsonResponse() string {
 
 func ExpectedRequestWithdrawalBody() string {
 	return `{
-  "asset":"btc",
-  "uuid":"12345",
-  "amount":"100",
-  "otp_token":"aaaa",
-  "sms_token":"bbbb"
+  "asset": "btc",
+  "uuid": "12345",
+  "amount": "100",
+  "otp_token": "aaaa",
+  "sms_token": "bbbb"
 }`
 }
 
