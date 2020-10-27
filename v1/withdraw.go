@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -16,6 +17,9 @@ func (c *Client) GetWithdrawalAccounts(ctx context.Context, params request.GetWi
 	queryParam := make(map[string]string)
 
 	// set required param
+	if params.Asset == "" {
+		return nil, errors.New("asset parameter is required")
+	}
 	queryParam["asset"] = params.Asset
 
 	res, err := c.sendRequest(ctx, "GET", spath, nil, &queryParam)
@@ -33,6 +37,19 @@ func (c *Client) GetWithdrawalAccounts(ctx context.Context, params request.GetWi
 
 func (c *Client) RequestWithdrawal(ctx context.Context, params request.RequestWithdrawalParams) (*models.RequestWithdrawal, error) {
 	spath := fmt.Sprintf("/user/request_withdrawal")
+
+	// check required param
+	if params.Asset == "" {
+		return nil, errors.New("asset parameter is")
+	}
+	if params.UuID == "" {
+		return nil, errors.New("uuid parameter is")
+	}
+	if params.Amount == "" {
+		return nil, errors.New("amount parameter is")
+	}
+
+	// build param
 	bodyTemplate, err := json.Marshal(params)
 	if err != nil {
 		return nil, err

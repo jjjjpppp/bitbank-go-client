@@ -2,6 +2,7 @@ package bitbank
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/jjjjpppp/bitbank-go-client/v1/models"
@@ -13,6 +14,9 @@ func (c *Client) GetTrades(ctx context.Context, params request.GetTradeParams) (
 	queryParam := make(map[string]string)
 
 	// set required param
+	if params.Pair == "" {
+		return nil, errors.New("pair parameter is required")
+	}
 	queryParam["pair"] = params.Pair
 
 	// set optional param
