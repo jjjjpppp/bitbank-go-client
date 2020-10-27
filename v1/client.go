@@ -15,7 +15,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 	"io"
 	"io/ioutil"
 	"log"
@@ -27,6 +26,8 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 )
 
 const (

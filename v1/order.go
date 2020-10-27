@@ -1,18 +1,32 @@
 package bitbank
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 	"strings"
+
+	"github.com/jjjjpppp/bitbank-go-client/v1/models"
+	"github.com/jjjjpppp/bitbank-go-client/v1/request"
 )
 
-func (c *Client) GetOrder(ctx context.Context, pair, orderID string) (*models.Order, error) {
+func (c *Client) GetOrder(ctx context.Context, params request.GetOrderParams) (*models.Order, error) {
 	spath := fmt.Sprintf("/user/spot/order")
-	queryParam := &map[string]string{
-		"pair":     pair,
-		"order_id": orderID}
-	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
+	queryParam := make(map[string]string)
+
+	// set required param
+	if params.Pair == "" {
+		return nil, errors.New("pair parameter is required")
+	}
+	queryParam["pair"] = params.Pair
+	if params.OrderID == "" {
+		return nil, errors.New("order_id parameter is required")
+	}
+	queryParam["order_id"] = params.OrderID
+
+	res, err := c.sendRequest(ctx, "GET", spath, nil, &queryParam)
 	if err != nil {
 		return nil, err
 	}
@@ -25,17 +39,34 @@ func (c *Client) GetOrder(ctx context.Context, pair, orderID string) (*models.Or
 	return &order, nil
 }
 
-func (c *Client) CreateOrder(ctx context.Context, pair, amount string, price int, side, _type string) (*models.Order, error) {
+func (c *Client) CreateOrder(ctx context.Context, params request.CreateOrderParams) (*models.Order, error) {
 	spath := fmt.Sprintf("/user/spot/order")
-	bodyTemplate :=
-		`{
-  "pair":"%s",
-  "amount":"%s",
-  "price":%d,
-  "side":"%s",
-  "type":"%s"
-}`
-	body := fmt.Sprintf(bodyTemplate, pair, amount, price, side, _type)
+
+	// check required param
+	if params.Pair == "" {
+		return nil, errors.New("pair parameter is required")
+	}
+	if params.Amount == "" {
+		return nil, errors.New("amount parameter is required")
+	}
+	if params.Side == "" {
+		return nil, errors.New("side parameter is required")
+	}
+	if params.Type == "" {
+		return nil, errors.New("type parameter is required")
+	}
+
+	// build param
+	bodyTemplate, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = json.Indent(&buf, []byte(bodyTemplate), "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	body := buf.String()
 	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
@@ -49,16 +80,34 @@ func (c *Client) CreateOrder(ctx context.Context, pair, amount string, price int
 	return &order, nil
 }
 
-func (c *Client) GetActiveOrders(ctx context.Context, pair string, count, fromID, endID, since, end float64) (*models.Orders, error) {
+func (c *Client) GetActiveOrders(ctx context.Context, params request.GetActiveOrdersParams) (*models.Orders, error) {
 	spath := fmt.Sprintf("/user/spot/active_orders")
-	queryParam := &map[string]string{
-		"pair":    pair,
-		"count":   fmt.Sprint(count),
-		"from_id": fmt.Sprint(fromID),
-		"end_id":  fmt.Sprint(endID),
-		"since":   fmt.Sprint(since),
-		"end":     fmt.Sprint(end)}
-	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
+	queryParam := make(map[string]string)
+
+	// set required param
+	if params.Pair == "" {
+		return nil, errors.New("pair parameter is required")
+	}
+	queryParam["pair"] = params.Pair
+
+	// set optional param
+	if params.Count != 0.0 {
+		queryParam["count"] = fmt.Sprint(params.Count)
+	}
+	if params.FromID != 0.0 {
+		queryParam["from_id"] = fmt.Sprint(params.FromID)
+	}
+	if params.EndID != 0.0 {
+		queryParam["end_id"] = fmt.Sprint(params.EndID)
+	}
+	if params.Since != 0.0 {
+		queryParam["since"] = fmt.Sprint(params.Since)
+	}
+	if params.End != 0.0 {
+		queryParam["end"] = fmt.Sprint(params.End)
+	}
+
+	res, err := c.sendRequest(ctx, "GET", spath, nil, &queryParam)
 	if err != nil {
 		return nil, err
 	}
@@ -71,14 +120,28 @@ func (c *Client) GetActiveOrders(ctx context.Context, pair string, count, fromID
 	return &orders, nil
 }
 
-func (c *Client) CancelOrder(ctx context.Context, pair string, orderID int) (*models.Order, error) {
+func (c *Client) CancelOrder(ctx context.Context, params request.CancelOrderParams) (*models.Order, error) {
 	spath := fmt.Sprintf("/user/spot/cancel_order")
-	bodyTemplate :=
-		`{
-  "pair":"%s",
-  "order_id":%d
-}`
-	body := fmt.Sprintf(bodyTemplate, pair, orderID)
+
+	// check reuqired param
+	if params.Pair == "" {
+		return nil, errors.New("pair parameter is required")
+	}
+	if params.OrderID == 0.0 {
+		return nil, errors.New("order_id parameter is required")
+	}
+
+	// build param
+	bodyTemplate, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = json.Indent(&buf, []byte(bodyTemplate), "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	body := buf.String()
 	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
@@ -92,14 +155,28 @@ func (c *Client) CancelOrder(ctx context.Context, pair string, orderID int) (*mo
 	return &order, nil
 }
 
-func (c *Client) CancelOrders(ctx context.Context, pair string, orderIDs []int) (*models.Orders, error) {
+func (c *Client) CancelOrders(ctx context.Context, params request.CancelOrdersParams) (*models.Orders, error) {
 	spath := fmt.Sprintf("/user/spot/cancel_orders")
-	bodyTemplate :=
-		`{
-  "pair":"%s",
-  "order_ids":[%s]
-}`
-	body := fmt.Sprintf(bodyTemplate, pair, arrayToString(orderIDs, ","))
+
+	// check required param
+	if params.Pair == "" {
+		return nil, errors.New("pair parameter is required")
+	}
+	if len(params.OrderIDs) == 0 {
+		return nil, errors.New("order_ids parameter is required")
+	}
+
+	// build param
+	bodyTemplate, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = json.Indent(&buf, []byte(bodyTemplate), "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	body := buf.String()
 	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
@@ -113,14 +190,28 @@ func (c *Client) CancelOrders(ctx context.Context, pair string, orderIDs []int) 
 	return &orders, nil
 }
 
-func (c *Client) GetOrdersInfo(ctx context.Context, pair string, orderIDs []int) (*models.Orders, error) {
+func (c *Client) GetOrdersInfo(ctx context.Context, params request.GetOrdersInfoParams) (*models.Orders, error) {
 	spath := fmt.Sprintf("/user/spot/orders_info")
-	bodyTemplate :=
-		`{
-  "pair":"%s",
-  "order_ids":[%s]
-}`
-	body := fmt.Sprintf(bodyTemplate, pair, arrayToString(orderIDs, ","))
+
+	// check required param
+	if params.Pair == "" {
+		return nil, errors.New("pair parameter is required")
+	}
+	if len(params.OrderIDs) == 0 {
+		return nil, errors.New("order_ids parameter is required")
+	}
+
+	// build param
+	bodyTemplate, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = json.Indent(&buf, []byte(bodyTemplate), "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	body := buf.String()
 	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err

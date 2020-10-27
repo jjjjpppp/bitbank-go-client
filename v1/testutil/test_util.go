@@ -3,11 +3,12 @@ package testutil
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/jjjjpppp/bitbank-go-client/v1/models"
 )
 
 func GenerateTestServer(t *testing.T, expectPath string, expectMethod string, expectBody string, jsonResponse string) *httptest.Server {
@@ -303,11 +304,11 @@ func CreateOrderJsonResponse() string {
 
 func ExpectedCreateOrderBody() string {
 	return `{
-  "pair":"btc_jpy",
-  "amount":"0.1",
-  "price":100000,
-  "side":"buy",
-  "type":"limit"
+  "pair": "btc_jpy",
+  "amount": "0.1",
+  "price": 100000,
+  "side": "buy",
+  "type": "limit"
 }`
 }
 
@@ -349,8 +350,8 @@ func CancelOrderJsonResponse() string {
 
 func ExpectedCancelOrderBody() string {
 	return `{
-  "pair":"btc_jpy",
-  "order_id":12345
+  "pair": "btc_jpy",
+  "order_id": 12345
 }`
 }
 
@@ -396,8 +397,14 @@ func CancelOrdersJsonResponse() string {
 
 func ExpectedCancelOrdersBody() string {
 	return `{
-  "pair":"btc_jpy",
-  "order_ids":[1,2,3,4,5]
+  "pair": "btc_jpy",
+  "order_ids": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ]
 }`
 }
 
@@ -446,8 +453,14 @@ func GetOrdersInfoJsonResponse() string {
 
 func ExpectedGetOrdersInfoBody() string {
 	return `{
-  "pair":"btc_jpy",
-  "order_ids":[1,2,3,4,5]
+  "pair": "btc_jpy",
+  "order_ids": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ]
 }`
 }
 
@@ -564,11 +577,11 @@ func RequestWithdrawalJsonResponse() string {
 
 func ExpectedRequestWithdrawalBody() string {
 	return `{
-  "asset":"btc",
-  "uuid":"12345",
-  "amount":"100",
-  "otp_token":"aaaa",
-  "sms_token":"bbbb"
+  "asset": "btc",
+  "uuid": "12345",
+  "amount": "100",
+  "otp_token": "aaaa",
+  "sms_token": "bbbb"
 }`
 }
 

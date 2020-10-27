@@ -2,11 +2,13 @@ package bitbank
 
 import (
 	"context"
-	"github.com/google/go-cmp/cmp"
-	"github.com/jjjjpppp/bitbank-go-client/v1/models"
-	"github.com/jjjjpppp/bitbank-go-client/v1/testutil"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/jjjjpppp/bitbank-go-client/v1/models"
+	"github.com/jjjjpppp/bitbank-go-client/v1/request"
+	"github.com/jjjjpppp/bitbank-go-client/v1/testutil"
 )
 
 func TestGetTrades(t *testing.T) {
@@ -45,7 +47,8 @@ func TestGetTrades(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetTrades(ctx, c.param.pair, c.param.count, c.param.fromID, c.param.endID, c.param.since, c.param.end, c.param.order)
+		params := request.GetTradeParams{c.param.pair, c.param.count, c.param.fromID, c.param.endID, c.param.since, c.param.end, c.param.order}
+		r, err := client.GetTrades(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}

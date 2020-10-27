@@ -2,11 +2,13 @@ package bitbank
 
 import (
 	"context"
-	"github.com/google/go-cmp/cmp"
-	"github.com/jjjjpppp/bitbank-go-client/v1/models"
-	"github.com/jjjjpppp/bitbank-go-client/v1/testutil"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/jjjjpppp/bitbank-go-client/v1/models"
+	"github.com/jjjjpppp/bitbank-go-client/v1/request"
+	"github.com/jjjjpppp/bitbank-go-client/v1/testutil"
 )
 
 func TestGetOrder(t *testing.T) {
@@ -40,7 +42,8 @@ func TestGetOrder(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetOrder(ctx, c.param.pair, c.param.orderID)
+		params := request.GetOrderParams{c.param.pair, c.param.orderID}
+		r, err := client.GetOrder(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
@@ -85,7 +88,8 @@ func TestGetActiveOrders(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetActiveOrders(ctx, c.param.pair, c.param.count, c.param.fromID, c.param.endID, c.param.since, c.param.end)
+		params := request.GetActiveOrdersParams{c.param.pair, c.param.count, c.param.fromID, c.param.endID, c.param.since, c.param.end}
+		r, err := client.GetActiveOrders(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
@@ -129,7 +133,8 @@ func TestCreateOrder(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.CreateOrder(ctx, c.param.pair, c.param.amount, c.param.price, c.param.side, c.param._type)
+		params := request.CreateOrderParams{c.param.pair, c.param.amount, c.param.price, c.param.side, c.param._type}
+		r, err := client.CreateOrder(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
@@ -170,7 +175,8 @@ func TestCancelOrder(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.CancelOrder(ctx, c.param.pair, c.param.orderID)
+		params := request.CancelOrderParams{c.param.pair, c.param.orderID}
+		r, err := client.CancelOrder(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
@@ -211,7 +217,8 @@ func TestCancelOrders(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.CancelOrders(ctx, c.param.pair, c.param.orderIDs)
+		params := request.CancelOrdersParams{c.param.pair, c.param.orderIDs}
+		r, err := client.CancelOrders(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
@@ -252,7 +259,8 @@ func TestGetOrdersInfo(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetOrdersInfo(ctx, c.param.pair, c.param.orderIDs)
+		params := request.GetOrdersInfoParams{c.param.pair, c.param.orderIDs}
+		r, err := client.GetOrdersInfo(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
