@@ -11,12 +11,14 @@ import (
 	"github.com/jjjjpppp/bitbank-go-client/v1/request"
 )
 
-func (c *Client) GetWithdrawalAccounts(ctx context.Context, asset string) (*models.WithdrawalAccounts, error) {
+func (c *Client) GetWithdrawalAccounts(ctx context.Context, params request.GetWithdrawalAccountsParams) (*models.WithdrawalAccounts, error) {
 	spath := fmt.Sprintf("/user/withdrawal_account")
-	queryParam := &map[string]string{
-		"asset": asset,
-	}
-	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
+	queryParam := make(map[string]string)
+
+	// set required param
+	queryParam["asset"] = params.Asset
+
+	res, err := c.sendRequest(ctx, "GET", spath, nil, &queryParam)
 	if err != nil {
 		return nil, err
 	}

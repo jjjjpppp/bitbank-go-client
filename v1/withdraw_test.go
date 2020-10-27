@@ -41,7 +41,8 @@ func TestGetWithdrawalAccounts(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		r, err := client.GetWithdrawalAccounts(ctx, c.param.asset)
+		params := request.GetWithdrawalAccountsParams{c.param.asset}
+		r, err := client.GetWithdrawalAccounts(ctx, params)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}

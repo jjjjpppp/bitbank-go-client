@@ -1,5 +1,9 @@
 package request
 
+type GetWithdrawalAccountsParams struct {
+	Asset string		`json:"asset,omitempty"`
+}
+
 type RequestWithdrawalParams struct {
 	Asset string		`json:"asset,omitempty"`
 	UuID string			`json:"uuid,omitempty"`
